@@ -7,7 +7,7 @@
 </head>
 <body>
   <h1>Viewer</h1>
-  <input type="file" id="fileInput" accept=".zip">
+  <input type="file" id="fileInput" accept=".myaro">
   <button id="loadFromRepo">Load zip from site</button>
   <div id="gallery" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
 
@@ -39,7 +39,7 @@
     });
 
     loadFromRepo.addEventListener('click', async () => {
-      const resp = await fetch('./myzip.zip');
+      const resp = await fetch('./myzip.myaro');
       const ab = await resp.arrayBuffer();
       loadZip(ab);
     });
