@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Download Image Pack</title>
+</head>
+<body>
+  <h1>Download Image Pack</h1>
+  <button id="downloadBtn">Download Pack</button>
+
+  <script>
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      // Download the zip
+      const a = document.createElement('a');
+      a.href = './myzip.zip'; // must be in the same folder (docs/)
+      a.download = 'myzip.zip';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // Redirect to viewer page
+      setTimeout(() => {
+        window.location.href = './viewer.html';
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
