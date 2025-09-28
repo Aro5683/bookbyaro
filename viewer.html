@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>View Image Pack</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <h1>Viewer</h1>
+  <input type="file" id="fileInput" accept=".zip">
+  <button id="loadFromRepo">Load zip from site</button>
+  <div id="gallery" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const loadFromRepo = document.getElementById('loadFromRepo');
+    const gallery = document.getElementById('gallery');
+
+    async function loadZip(ab) {
+      const zip = await JSZip.loadAsync(ab);
+      gallery.innerHTML = '';
+      for (const filename of Object.keys(zip.files)) {
+        if (zip.files[filename].dir) continue;
+        const blob = await zip.files[filename].async('blob');
+        const url = URL.createObjectURL(blob);
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.width = '150px';
+        img.oncontextmenu = () => false;
+        gallery.appendChild(img);
+      }
+    }
+
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const ab = await file.arrayBuffer();
+      loadZip(ab);
+    });
+
+    loadFromRepo.addEventListener('click', async () => {
+      const resp = await fetch('./myzip.zip');
+      const ab = await resp.arrayBuffer();
+      loadZip(ab);
+    });
+  </script>
+</body>
+</html>
