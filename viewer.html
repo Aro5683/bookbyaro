@@ -2,47 +2,52 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>View Image Pack</title>
+  <title>View .myaro Pack</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
-  <h1>Viewer</h1>
-  <input type="file" id="fileInput" accept=".myaro">
-  <button id="loadFromRepo">Load zip from site</button>
-  <div id="gallery" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+<h1>Viewer</h1>
+<input type="file" id="fileInput" accept=".myaro">
+<button id="loadFromRepo">Load Pack from Site</button>
+<div id="gallery" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
 
-  <script>
-    const fileInput = document.getElementById('fileInput');
-    const loadFromRepo = document.getElementById('loadFromRepo');
-    const gallery = document.getElementById('gallery');
+<script>
+const gallery = document.getElementById('gallery');
+const fileInput = document.getElementById('fileInput');
+const loadFromRepo = document.getElementById('loadFromRepo');
 
-    async function loadZip(ab) {
-      const zip = await JSZip.loadAsync(ab);
-      gallery.innerHTML = '';
-      for (const filename of Object.keys(zip.files)) {
-        if (zip.files[filename].dir) continue;
-        const blob = await zip.files[filename].async('blob');
-        const url = URL.createObjectURL(blob);
-        const img = document.createElement('img');
-        img.src = url;
-        img.style.width = '150px';
-        img.oncontextmenu = () => false;
-        gallery.appendChild(img);
-      }
+async function loadMyaro(arrayBuffer) {
+    try {
+        const zip = await JSZip.loadAsync(arrayBuffer);
+        gallery.innerHTML = '';
+        for (const filename of Object.keys(zip.files)) {
+            if (zip.files[filename].dir) continue;
+            const blob = await zip.files[filename].async('blob');
+            const imgURL = URL.createObjectURL(blob);
+            const img = document.createElement('img');
+            img.src = imgURL;
+            img.style.width = '150px';
+            img.oncontextmenu = () => false;
+            gallery.appendChild(img);
+        }
+    } catch (err) {
+        alert("Error reading .myaro file. Make sure it is a valid zip.");
+        console.error(err);
     }
+}
 
-    fileInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const ab = await file.arrayBuffer();
-      loadZip(ab);
-    });
+fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const ab = await file.arrayBuffer();
+    loadMyaro(ab);
+});
 
-    loadFromRepo.addEventListener('click', async () => {
-      const resp = await fetch('./myzip.myaro');
-      const ab = await resp.arrayBuffer();
-      loadZip(ab);
-    });
-  </script>
+loadFromRepo.addEventListener('click', async () => {
+    const resp = await fetch('./myimages.myaro');
+    const ab = await resp.arrayBuffer();
+    loadMyaro(ab);
+});
+</script>
 </body>
 </html>
